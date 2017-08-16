@@ -20,34 +20,38 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class HelpCommand implements CommandExecutor {
-	HelperBot hb;
+	private HelperBot hb;
 	enum Type {TEXT, URL}
 	public HelpCommand(HelperBot hb) {
 		this.hb = hb;
 	}
+
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-		String page = "";
+		StringBuilder page = new StringBuilder("");
 		if (args.length == 0) {
-			page = hb.getConfig().getString("default");
+			page.insert(0, hb.getConfig().getString("default"));
 		} else {
 			for(String arg:args){
-				if(!page.equals(""))page += " ";
-				page += arg;
+				if(!page.toString().equals("")){
+				    page.append(" ");
+                }
+				page.append(arg);
 			}
 		}
 		if (sender instanceof Player) {
-			if (!(((Player) sender).hasPermission(hb.cf.get("permissions.help")) || ((Player) sender).isOp() || ((Player) sender).hasPermission(hb.cf.get("permissions.pagehelp").replaceAll("%page", page)))) {
+			if (!(((Player) sender).hasPermission(hb.cf.get("permissions.help")) || ((Player) sender).isOp() || ((Player) sender).hasPermission(hb.cf.get("permissions.pagehelp").replaceAll("%page", page.toString())))) {
 				sender.sendMessage(hb.cf.getLang("noPermission"));
 				return true;
 			}
 		}
-		List<String> l = readPage(page);
+		List<String> l = readPage(page.toString());
 		for (String s : l) {
 			sender.sendMessage(shortcodify(hb.colorize(s), sender));
 		}
 		return true;
 	}
-	public List<String> readPage(String page) {
+
+	private List<String> readPage(String page) {
 		File f = new File(hb.getDataFolder().getPath() + File.separatorChar + page + "." + hb.cf.get("extension"));
 		BufferedReader reader;
 		List<String> l = new ArrayList<String>();
@@ -71,13 +75,14 @@ public class HelpCommand implements CommandExecutor {
 			reader.close();
 		} catch (FileNotFoundException e) {
 			l.clear();
-			l.add(ChatColor.DARK_RED + page + " not found.");
+			l.add(ChatColor.DARK_RED + page + ChatColor.WHITE + " help page not found.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return l;
 	}
-	public Object[] analyze(String text) {
+
+	private Object[] analyze(String text) {
 		String re1="(\\[url\\])";
 		String re2=".*?";
 		String re3="((?:http|https)(?::\\/{2}[\\w]+)(?:[\\/|\\.]?)(?:[^\\s\"]*))";
@@ -94,7 +99,8 @@ public class HelpCommand implements CommandExecutor {
 		o[1] = text;
 		return o;
 	}
-	public String shortcodify(String s, CommandSender sender) {
+
+	private String shortcodify(String s, CommandSender sender) {
 		String sc_player, sc_coords, sc_x, sc_y, sc_z, sc_level, sc_world;
 		if (!(sender instanceof Player)) {
 			sc_player = "Console";

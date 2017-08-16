@@ -1,11 +1,10 @@
 name: HelperBot
-version: 2.2
+version: 3.0
 main: me.Delocaz.HelperBot.HelperBot
 author: Delocaz
 commands:
     help:
         usage: /<command> <page>
-        aliases: [helpme, plzhelp, icanhazhelp, halp]
     addhelp:
         usage: /<command> <page> <content>
     delhelp:

@@ -8,10 +8,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class DelHelpCommand implements CommandExecutor {
-	HelperBot hb;
+	private  HelperBot hb;
+
 	public DelHelpCommand(HelperBot hb) {
 		this.hb = hb;
 	}
+
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(hb.cf.getLang("specifyPage"));
@@ -24,8 +26,11 @@ public class DelHelpCommand implements CommandExecutor {
 		}
 		String page = args[0];
 		File f = new File(hb.getDataFolder().getPath() + File.separatorChar + page + "." + hb.cf.get("extension"));
-		f.delete();
-		sender.sendMessage(hb.cf.getLang("deletedSuccessfully").replaceAll("%page", page));
+		if(f.delete()){
+            sender.sendMessage(hb.cf.getLang("deletedSuccessfully").replaceAll("%page", page));
+        }else{
+            sender.sendMessage(hb.cf.getLang("deletedUnSuccessfully").replaceAll("%page", page));
+        }
 		return true;
 	}
 }

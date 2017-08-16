@@ -8,13 +8,13 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 public class ConfigFile {
-	HelperBot hb;
-	YamlConfiguration lng;
+	private HelperBot hb;
+	private YamlConfiguration lng;
 	public ConfigFile(HelperBot hb) {
 		this.hb = hb;
 		init();
 	}
-	public void init() {
+	private void init() {
 		hb.getConfig().addDefault("extension", "txt");
 		hb.getConfig().addDefault("addhelp.newline", "/n/");
 		hb.getConfig().addDefault("default", "default");
@@ -38,23 +38,28 @@ public class ConfigFile {
 			lng.load(f);
 		} catch (FileNotFoundException e) {
 			try {
-				f.getParentFile().mkdir();
-				f.createNewFile();
-				lng.load(f);
+				if(f.getParentFile().mkdir()) {
+					if(!f.createNewFile()){
+						System.out.println("Failed to create a default config file.");
+					}else{
+						lng.load(f);
+					}
+				}else{
+					System.out.println("Failed to create a directory for the default config file.");
+				}
 			} catch (IOException e1) {
 				e1.printStackTrace();
 			} catch (InvalidConfigurationException e1) {
 				e.printStackTrace();
 			}
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (InvalidConfigurationException e) {
+		} catch (IOException | InvalidConfigurationException e) {
 			e.printStackTrace();
 		}
-		lng.addDefault("deletedSuccessfully", "&a%page deleted successfully.");
-		lng.addDefault("createdSuccessfully", "&a%page created successfully.");
-		lng.addDefault("specifyPage", "&4Please specify a page.");
-		lng.addDefault("missingContent", "&4Tell me what to put in %page!");
+		lng.addDefault("deletedSuccessfully", "&4%page &adeleted successfully.");
+        lng.addDefault("deletedUnSuccessfully", "&4%page &cNOT deleted successfully.");
+        lng.addDefault("createdSuccessfully", "&4%page &acreated successfully.");
+		lng.addDefault("specifyPage", "&fPlease specify a page.");
+		lng.addDefault("missingContent", "&fTell me what to put in &4%page&f!");
 		lng.addDefault("noPermission", "Unknown command. Type \"help\" for help.");
 		lng.options().copyDefaults(true);
 		try {
@@ -63,12 +68,15 @@ public class ConfigFile {
 			e.printStackTrace();
 		}
 	}
-	public String get(String path) {
-		return hb.getConfig().getString(path);
+
+	public String get(String tag) {
+		return hb.getConfig().getString(tag);
 	}
+
 	public String getLang(String path) {
 		return hb.colorize(lng.getString(path));
 	}
+
 	public void reload() {
 		hb.reloadConfig();
 		init();

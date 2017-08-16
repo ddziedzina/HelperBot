@@ -11,10 +11,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 public class AddHelpCommand implements CommandExecutor {
-	HelperBot hb;
+	private HelperBot hb;
+
 	public AddHelpCommand(HelperBot hb) {
 		this.hb = hb;
 	}
+
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if (args.length == 0) {
 			sender.sendMessage(hb.cf.getLang("specifyPage"));
@@ -33,12 +35,14 @@ public class AddHelpCommand implements CommandExecutor {
 		BufferedWriter bw;
 		try {
 			bw = new BufferedWriter(new FileWriter(f));
-			String content = "";
+			StringBuilder content = new StringBuilder("");
 			for (int i = 1; i < args.length; i++) {
-				if (content != "") {content = content + " ";}
-				content = content + args[i];
+				if (content.toString().equals("")) {
+				    content.append(" ");
+				}
+				content.append(args[i]);
 			}
-			String[] split = content.split(hb.cf.get("addhelp.newline"));
+			String[] split = content.toString().split(hb.cf.get("addhelp.newline"));
 			for (String s : split) {
 				bw.write(s + System.getProperty("line.separator"));
 			}

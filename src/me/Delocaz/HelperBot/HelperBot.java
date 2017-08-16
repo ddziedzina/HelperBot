@@ -10,7 +10,7 @@ public class HelperBot extends JavaPlugin implements Listener {
 	HelpCommand hc;
 	AddHelpCommand ahc;
 	DelHelpCommand dhc;
-	public ConfigFile cf;
+	ConfigFile cf;
 	public void onEnable() {
 		cf = new ConfigFile(this);
 		hc = new HelpCommand(this);
@@ -19,19 +19,24 @@ public class HelperBot extends JavaPlugin implements Listener {
 		getCommand("help").setExecutor(hc);
 		getCommand("addhelp").setExecutor(ahc);
 		getCommand("delhelp").setExecutor(dhc);
-		try {
+        System.out.println("[HelperBot] Enabled!");
+
+        try {
 		    Metrics metrics = new Metrics(this);
 		    metrics.start();
 		} catch (IOException e) {
 		    System.out.println("Failed to submit stats :-(");
 		}
 	}
+
 	public void onDisable() {
-		System.out.println("[HelperBot] Bai!");
+		System.out.println("[HelperBot] Disabled!");
 	}
+
 	public void disable() {
 		setEnabled(false);
 	}
+
 	public String colorize(String s) {
 		s = s.replaceAll("&([0-9a-f])", "\u00A7$1");
 		s = s.replaceAll("&k", "" + ChatColor.MAGIC.getChar());
